@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - Cloud File Sharing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .navbar {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .upload-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .upload-box h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .upload-box input[type="file"] {
+            margin: 10px 0;
+        }
+        .upload-box button {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .upload-box button:hover {
+            background-color: #34495e;
+        }
+        .files-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .files-box h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table th, table td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        table tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn-download {
+            background-color: #27ae60;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .quota {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        .flash {
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <h1>☁️ Cloud File Sharing</h1>
+        <div>
+            <span>Welcome, {{ current_user.username }}</span>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for msg in messages %}
+              <div class="flash">{{ msg }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Upload Box -->
+        <div class="upload-box">
+            <h2>📤 Upload File</h2>
+            <form method="POST" action="/upload" enctype="multipart/form-data">
+                <input type="file" name="file" required><br>
+                <button type="submit">Upload</button>
+            </form>
+            <div class="quota">
+                Storage used: {{ used_mb }} MB / 500 MB
+            </div>
+        </div>
+
+        <!-- Files List -->
+        <div class="files-box">
+            <h2>📁 My Files</h2>
+            {% if files %}
+            <table>
+                <tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Uploaded</th>
+                    <th>Actions</th>
+                </tr>
+                {% for file in files %}
+                <tr>
+                    <td>{{ file.original_filename }}</td>
+                    <td>{{ file.file_size }} KB</td>
+                    <td>{{ file.upload_date.strftime('%d %b %Y') }}</td>
+                    <td>
+                        <a class="btn-download" href="/download/{{ file.id }}">Download</a>
+                        <a class="btn-delete" href="/delete/{{ file.id }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+                <p>No files uploaded yet. Upload your first file above!</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</body>
+</html>

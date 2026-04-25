@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Cloud File Sharing</title>
+</head>
+<body>
+    <h2>Login</h2>
+    <form method="POST" action="/login">
+        Username:<br>
+        <input type="text" name="username" required><br><br>
+        Password:<br>
+        <input type="password" name="password" required><br><br>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for msg in messages %}
+              <p style="color:red;">{{ msg }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/register">Register here</a></p>
+</body>
+</html>
